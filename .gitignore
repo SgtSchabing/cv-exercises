@@ -1,3 +1,4 @@
 .idea/
 __pycache__/
-ex02/code/data/
+data/
+*.tar.gz

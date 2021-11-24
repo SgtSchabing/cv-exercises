@@ -14,6 +14,9 @@ from torch import nn, optim
 from torch.utils.tensorboard import SummaryWriter
 import torchvision
 
+import ssl
+ssl._create_default_https_context = ssl._create_unverified_context
+
 def get_transforms(args):
     if args.transforms == 'basic':
         train_transforms = torchvision.transforms.Compose(
@@ -138,13 +141,14 @@ def main():
     # START TODO #################
     # initialize the SummaryWriter with a log directory in args.out_dir/logs
     # tb_writer = 
-    raise NotImplementedError
+    #raise NotImplementedError
     # END TODO #################
 
     # START TODO #################
     # get the transforms and pass them to the dataset
-    # train_transforms=
-    raise NotImplementedError
+    train_transforms, val_transforms=get_transforms(args)
+
+    #raise NotImplementedError
     # END TODO #################
 
     # create datasets and dataloaders
@@ -213,7 +217,7 @@ def main():
             train_loss, train_acc = train_one_epoch(model, train_loader, epoch, loss_fn, optimizer, args, device)
             # START TODO ###################
             # add_scalar train_loss and train_acc to tb_writer
-            raise NotImplementedError
+            #raise NotImplementedError
             # END TODO ###################
 
         # iterate over the val set to compute the accuracy
@@ -221,11 +225,11 @@ def main():
         print(f"Validation of epoch {epoch + 1} complete. Loss {val_loss:.6f} accuracy {val_acc:.2%}")
         # START TODO #################
         # add_scalar val_loss and val_acc to tb_writer
-        raise NotImplementedError
+        #raise NotImplementedError
         # END TODO ###################
         print(f"---------- End of epoch {epoch + 1}")
 
-    model_file = (f"model_e{args.num_epochs}_{args.optimizer}_f{args.num_filters}_"
+    model_file = (f"/model_e{args.num_epochs}_{args.optimizer}_f{args.num_filters}_"
                   f"lr{args.learning_rate:.1e}.pth")
     model_file = os.path.join(args.out_dir, model_file)
     print(f"Saving model to {model_file}")
@@ -238,7 +242,7 @@ def main():
     # START TODO #################
     # add_scalar test_loss and test_acc to tb_writer
     # ideally, you'd remember the model that achieved the best validation performance and test on that
-    raise NotImplementedError
+   # raise NotImplementedError
     # END TODO ###################
 
 
@@ -252,13 +256,13 @@ if __name__ == '__main__':
     # train the network for 256 epochs
     # do not provide the flag --augment, and specify out_dir as 'no_augment'
     # --- do not put code here ---
-    raise NotImplementedError
+
     # END TODO ###################
 
     # START TODO ###################
     # train the network a second time with the flag --augment and the out_dir 'augment'
     # --- do not put code here ---
-    raise NotImplementedError
+
     # END TODO ###################
 
     # START TODO ###################
@@ -276,5 +280,5 @@ if __name__ == '__main__':
     # (3) compare the training and validation curves of 'no_augment' and 'augment'
     #   see also the test performance
     # --- do not put code here ---
-    raise NotImplementedError
+
     # END TODO ###################

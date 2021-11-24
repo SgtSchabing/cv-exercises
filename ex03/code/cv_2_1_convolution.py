@@ -8,34 +8,43 @@ def convolve2D(image, kernel, padding=0, strides=1):
     yKernShape = kernel.shape[1]
     xImgShape = image.shape[0]
     yImgShape = image.shape[1]
+    print("Kernel:",xKernShape, "x", yKernShape, "\nImage:", xImgShape, "x", yImgShape)
 
     # Shape of Output Convolution
     # START TODO ###################
-    # xOutput =
-    # yOutput = 
-    raise NotImplementedError
+    xOutput = int((xImgShape + 2*padding - xKernShape + 1 ) / strides)
+    yOutput = int((yImgShape + 2*padding - yKernShape + 1 ) / strides)
     # END TODO ###################
     output = np.zeros((xOutput, yOutput))
 
     # Apply Equal Padding to All Sides
     if padding != 0:
         # START TODO ###################
-        # imagePadded = 
-        raise NotImplementedError
+        imagePadded = np.pad(image, padding)  # standard is 0-padding
         # END TODO ###################
     else:
         imagePadded = image
 
     # Iterate through image
-    for y in range(image.shape[1]):
+    for y in range(1, image.shape[1]+1):
         # Exit Convolution
         # START TODO ###################
-        raise NotImplementedError
+        # raise NotImplementedError
         # END TODO ###################
         
         # Only Convolve if y has gone down by the specified Strides
         # START TODO ###################
-        raise NotImplementedError
+        if (y + np.floor(yKernShape/2) ) % strides == 0:
+            for x in range(1, image.shape[0]+1):
+                if (x + np.floor(xKernShape / 2)) % strides == 0:
+                    xout  = int((x + np.floor(xKernShape/2)) / strides)-1
+                    yout  = int((y + np.floor(yKernShape/2)) / strides)-1
+                    yimstart = int(y - np.floor(yKernShape / 2))
+                    yimend = int(y + np.floor(yKernShape / 2))+1
+                    ximend = int(x + np.floor(xKernShape / 2))+1
+                    ximstart = int(x - np.floor(xKernShape / 2))
+                    teilimage = imagePadded[ximstart : ximend, yimstart : yimend] * kernel
+                    output[xout][yout] = np.sum(teilimage)
         # END TODO ###################
 
     return output
