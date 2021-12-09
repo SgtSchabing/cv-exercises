@@ -7,7 +7,7 @@ def convolve2D(image, kernel, padding=0, strides=1):
         https://medium.com/analytics-vidhya/2d-convolution-using-python-numpy-43442ff5f381
         and fixed the indexing for the output image
     """
-    # Cross Correlation
+    # Do convolution instead of Cross Correlation
     kernel = np.flipud(np.fliplr(kernel))
 
     # Gather Shapes of Kernel + Image + Padding
@@ -16,10 +16,10 @@ def convolve2D(image, kernel, padding=0, strides=1):
     # since slicing end is exclusive, uneven kernel shapes would be too small
     xKernRight = int(np.around(xKernShape / 2.))
     yKernShape = kernel.shape[1]
-    yKernLeft = yKernShape // 2
-    yKernRight = int(np.around(yKernShape / 2.))
-    xImgShape = image.shape[0]
-    yImgShape = image.shape[1]
+    yKernUp = yKernShape // 2
+    yKernDown = int(np.around(yKernShape / 2.))
+    xImgShape = image.shape[1]
+    yImgShape = image.shape[0]
 
     # Shape of Output Convolution
     # START TODO ###################
@@ -28,7 +28,8 @@ def convolve2D(image, kernel, padding=0, strides=1):
     xOutput = int(((xImgShape - xKernShape + 2 * padding) / strides) + 1)
     yOutput = int(((yImgShape - yKernShape + 2 * padding) / strides) + 1)
     # END TODO ###################
-    output = np.zeros((xOutput, yOutput))
+    # output = np.zeros((xOutput, yOutput))
+    output = np.zeros((yOutput, xOutput))
 
     # Apply Equal Padding to All Sides
     if padding != 0:
@@ -44,10 +45,12 @@ def convolve2D(image, kernel, padding=0, strides=1):
     # Indices for output image
     x_out = y_out = -1
     # Iterate through image
-    for y in range(yKernLeft, imagePadded.shape[1], strides):
+    for y in range(yKernUp, imagePadded.shape[0], strides):
+        # print(y)
+        # exit()
         # START TODO ###################
         # Exit Convolution before y is out of bounds
-        if y > imagePadded.shape[1] - yKernRight:
+        if y > imagePadded.shape[0] - yKernDown:
             break
         # END TODO ###################
         
@@ -57,16 +60,16 @@ def convolve2D(image, kernel, padding=0, strides=1):
         # and save the sum of the elementwise multiplication
         # to the corresponding pixel in the output image
         y_out += 1
-        for x in range(xKernLeft, imagePadded.shape[0], strides):
+        for x in range(xKernLeft, imagePadded.shape[1], strides):
             # Go to next row once kernel is out of bounds
-            if x > imagePadded.shape[0] - xKernRight:
+            if x > imagePadded.shape[1] - xKernRight:
                 break
 
             x_out += 1
             x_out_idx = x_out % xOutput
             y_out_idx = y_out % yOutput
             # output[x_out_idx, y_out_idx] = (kernel * imagePadded[x: x + xKernShape, y: y + yKernShape]).sum()
-            output[x_out_idx, y_out_idx] = (kernel * imagePadded[x-xKernLeft: x+xKernRight, y-yKernLeft:y+yKernRight]).sum()
+            output[y_out_idx, x_out_idx] = (kernel * imagePadded[y-yKernUp:y+yKernDown, x-xKernLeft: x+xKernRight]).sum()
         # END TODO ###################
     return output
 
@@ -79,5 +82,5 @@ if __name__ == '__main__':
     kernel = np.array([[-1, -1, -1], [-1, 8, -1], [-1, -1, -1]])
 
     # Convolve and Save Output
-    output = convolve2D(image, kernel, padding=2, strides=4)
+    output = convolve2D(image, kernel, padding=2, strides=2)
     cv2.imwrite('2DConvolved.png', output)
